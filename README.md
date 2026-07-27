@@ -15,11 +15,9 @@ The project ships as a [clawhub](https://clawhub.ai) skill package (`x-publisher
 
 ## Prerequisites
 
-### 1. Install Tweepy
+### 1. Dependencies
 
-```bash
-pip3 install tweepy --user
-```
+**Python 3.7+** and **tweepy** are installed automatically: the `scripts/x_publisher` (and `scripts/post_thread`) entrypoint wrappers create an isolated virtualenv at `<skill_dir>/.venv` on first run and install `requirements.txt` (which pins `tweepy`) into it. No manual `pip install` is needed. Override the venv location with `SKILL_VENV_DIR=<path>`.
 
 ### 2. Get X API credentials
 
@@ -60,7 +58,7 @@ Optionally, set `X_HTTP_PROXY` if the X API is not reachable directly from your 
 Run this first in a new environment to confirm authentication and see the account:
 
 ```bash
-python3 scripts/x_publisher.py verify
+scripts/x_publisher verify
 ```
 
 ```
@@ -74,29 +72,29 @@ python3 scripts/x_publisher.py verify
 ### Publish a text-only tweet
 
 ```bash
-python3 scripts/x_publisher.py tweet "Hello, X! This is my first tweet."
+scripts/x_publisher tweet "Hello, X! This is my first tweet."
 ```
 
 ### Publish a tweet with media
 
 ```bash
 # Single image
-python3 scripts/x_publisher.py tweet "Check out this photo!" --media /path/to/image.jpg
+scripts/x_publisher tweet "Check out this photo!" --media /path/to/image.jpg
 
 # Up to 4 images
-python3 scripts/x_publisher.py tweet "My photo collection:" \
+scripts/x_publisher tweet "My photo collection:" \
   --media /path/to/photo1.jpg \
   --media /path/to/photo2.png \
   --media /path/to/photo3.gif
 
 # A video
-python3 scripts/x_publisher.py tweet "Watch this!" --media /path/to/video.mp4
+scripts/x_publisher tweet "Watch this!" --media /path/to/video.mp4
 ```
 
 ### Reply to an existing tweet
 
 ```bash
-python3 scripts/x_publisher.py tweet "A reply." --reply-to <tweet_id>
+scripts/x_publisher tweet "A reply." --reply-to <tweet_id>
 ```
 
 ### Publish a thread
@@ -105,10 +103,10 @@ python3 scripts/x_publisher.py tweet "A reply." --reply-to <tweet_id>
 
 ```bash
 # Thread from arguments
-python3 scripts/post_thread.py "First tweet of the thread." "Second tweet." "Third tweet."
+scripts/post_thread "First tweet of the thread." "Second tweet." "Third tweet."
 
 # Thread from stdin
-printf 'First tweet.\nSecond tweet.\nThird tweet.\n' | python3 scripts/post_thread.py
+printf 'First tweet.\nSecond tweet.\nThird tweet.\n' | scripts/post_thread
 ```
 
 ### Output
@@ -141,9 +139,9 @@ On success, the publisher prints a human-readable block followed by a JSON objec
 
 | Command | Purpose | Example |
 |---------|---------|---------|
-| `verify` | Verify authentication | `x_publisher.py verify` |
-| `tweet` | Publish a tweet | `x_publisher.py tweet "Hello" --media photo.jpg` |
-| (thread) | Publish a reply-chained thread | `post_thread.py "First" "Second" "Third"` |
+| `verify` | Verify authentication | `scripts/x_publisher verify` |
+| `tweet` | Publish a tweet | `scripts/x_publisher tweet "Hello" --media photo.jpg` |
+| (thread) | Publish a reply-chained thread | `scripts/post_thread "First" "Second" "Third"` |
 
 ### `tweet` arguments
 
@@ -166,7 +164,9 @@ x-publisher/
 ├── references/
 │   └── x_api.md          # X API / Tweepy reference: methods, error codes, rate limits
 └── scripts/
+    ├── x_publisher       # venv entrypoint wrapper (provisions .venv, runs x_publisher.py)
     ├── x_publisher.py    # tweet / media / verify CLI; shared auth (get_client_data)
+    ├── post_thread       # venv entrypoint wrapper (runs post_thread.py)
     └── post_thread.py    # reply-chained thread CLI
 ```
 

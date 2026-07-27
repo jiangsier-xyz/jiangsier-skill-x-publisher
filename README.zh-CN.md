@@ -15,11 +15,9 @@
 
 ## 前置条件
 
-### 1. 安装 Tweepy
+### 1. 依赖
 
-```bash
-pip3 install tweepy --user
-```
+**Python 3.7+** 与 **tweepy** 会自动安装：`scripts/x_publisher`（及 `scripts/post_thread`）入口封装脚本会在首次运行时于 `<skill_dir>/.venv` 创建隔离虚拟环境，并安装 `requirements.txt`（已固定 `tweepy`）。无需手动 `pip install`。可用 `SKILL_VENV_DIR=<path>` 覆盖 venv 位置。
 
 ### 2. 获取 X API 凭证
 
@@ -60,7 +58,7 @@ set -a && . ./.env && set +a
 在新环境中先运行此命令，确认认证成功并查看账号信息：
 
 ```bash
-python3 scripts/x_publisher.py verify
+scripts/x_publisher verify
 ```
 
 ```
@@ -74,29 +72,29 @@ python3 scripts/x_publisher.py verify
 ### 发布纯文本推文
 
 ```bash
-python3 scripts/x_publisher.py tweet "Hello, X! This is my first tweet."
+scripts/x_publisher tweet "Hello, X! This is my first tweet."
 ```
 
 ### 发布带媒体的推文
 
 ```bash
 # 单张图片
-python3 scripts/x_publisher.py tweet "Check out this photo!" --media /path/to/image.jpg
+scripts/x_publisher tweet "Check out this photo!" --media /path/to/image.jpg
 
 # 最多 4 张图片
-python3 scripts/x_publisher.py tweet "My photo collection:" \
+scripts/x_publisher tweet "My photo collection:" \
   --media /path/to/photo1.jpg \
   --media /path/to/photo2.png \
   --media /path/to/photo3.gif
 
 # 视频
-python3 scripts/x_publisher.py tweet "Watch this!" --media /path/to/video.mp4
+scripts/x_publisher tweet "Watch this!" --media /path/to/video.mp4
 ```
 
 ### 回复已有推文
 
 ```bash
-python3 scripts/x_publisher.py tweet "A reply." --reply-to <tweet_id>
+scripts/x_publisher tweet "A reply." --reply-to <tweet_id>
 ```
 
 ### 发布串推（Thread）
@@ -105,10 +103,10 @@ python3 scripts/x_publisher.py tweet "A reply." --reply-to <tweet_id>
 
 ```bash
 # 用参数发布串推
-python3 scripts/post_thread.py "串推第一条。" "第二条。" "第三条。"
+scripts/post_thread "串推第一条。" "第二条。" "第三条。"
 
 # 从标准输入发布串推
-printf '第一条。\n第二条。\n第三条。\n' | python3 scripts/post_thread.py
+printf '第一条。\n第二条。\n第三条。\n' | scripts/post_thread
 ```
 
 ### 输出
@@ -141,9 +139,9 @@ printf '第一条。\n第二条。\n第三条。\n' | python3 scripts/post_threa
 
 | 命令 | 用途 | 示例 |
 |---------|---------|---------|
-| `verify` | 验证认证 | `x_publisher.py verify` |
-| `tweet` | 发布一条推文 | `x_publisher.py tweet "Hello" --media photo.jpg` |
-| （串推） | 发布回复串联的串推 | `post_thread.py "第一条" "第二条" "第三条"` |
+| `verify` | 验证认证 | `scripts/x_publisher verify` |
+| `tweet` | 发布一条推文 | `scripts/x_publisher tweet "Hello" --media photo.jpg` |
+| （串推） | 发布回复串联的串推 | `scripts/post_thread "第一条" "第二条" "第三条"` |
 
 ### `tweet` 参数
 
@@ -166,7 +164,9 @@ x-publisher/
 ├── references/
 │   └── x_api.md          # X API / Tweepy 参考：方法、错误码、速率限制
 └── scripts/
+    ├── x_publisher       # venv 入口封装（自动创建 .venv 并运行 x_publisher.py）
     ├── x_publisher.py    # tweet / media / verify 命令行；共享认证（get_client_data）
+    ├── post_thread       # venv 入口封装（运行 post_thread.py）
     └── post_thread.py    # 回复串联的串推命令行
 ```
 

@@ -22,11 +22,9 @@ Publish tweets using the official Tweepy library, supporting text-only, image, v
 
 ## Prerequisites
 
-### 1. Install Dependencies
+### 1. Dependencies
 
-```bash
-pip3 install tweepy --user
-```
+**Python 3.7+** and **tweepy** are installed automatically: the `scripts/x_publisher` (and `scripts/post_thread`) entrypoint wrappers create an isolated virtualenv at `<skill_dir>/.venv` on first run and install `requirements.txt` (which pins `tweepy`) into it. No manual `pip install` is needed. Override the venv location with `SKILL_VENV_DIR=<path>`.
 
 ### 2. Get X API Credentials
 
@@ -64,7 +62,7 @@ Optionally, set `X_HTTP_PROXY` if the X API is not reachable directly from your 
 Before first use, verify your credentials:
 
 ```bash
-python3 scripts/x_publisher.py verify
+scripts/x_publisher verify
 ```
 
 Example output:
@@ -79,17 +77,17 @@ Example output:
 ### Publish Text-Only Tweet
 
 ```bash
-python3 scripts/x_publisher.py tweet "Hello, X! This is my first tweet."
+scripts/x_publisher tweet "Hello, X! This is my first tweet."
 ```
 
 ### Publish Tweet with Images
 
 ```bash
 # Single image
-python3 scripts/x_publisher.py tweet "Check out this photo!" --media /path/to/image.jpg
+scripts/x_publisher tweet "Check out this photo!" --media /path/to/image.jpg
 
 # Multiple images (up to 4)
-python3 scripts/x_publisher.py tweet "My photo collection:" \
+scripts/x_publisher tweet "My photo collection:" \
   --media /path/to/photo1.jpg \
   --media /path/to/photo2.png \
   --media /path/to/photo3.gif
@@ -98,7 +96,7 @@ python3 scripts/x_publisher.py tweet "My photo collection:" \
 ### Publish Tweet with Video
 
 ```bash
-python3 scripts/x_publisher.py tweet "Watch this video!" --media /path/to/video.mp4
+scripts/x_publisher tweet "Watch this video!" --media /path/to/video.mp4
 ```
 
 ### Publish a Thread
@@ -107,16 +105,16 @@ Post a multi-tweet thread in one command. Each tweet is published as a reply to 
 
 ```bash
 # Thread from positional arguments (one tweet per argument)
-python3 scripts/post_thread.py "First tweet of the thread." "Second tweet." "Third tweet."
+scripts/post_thread "First tweet of the thread." "Second tweet." "Third tweet."
 
 # Thread from stdin (one tweet per line)
-printf 'First tweet.\nSecond tweet.\nThird tweet.\n' | python3 scripts/post_thread.py
+printf 'First tweet.\nSecond tweet.\nThird tweet.\n' | scripts/post_thread
 ```
 
 To reply to a single existing tweet (rather than start a new thread), use the `--reply-to` flag:
 
 ```bash
-python3 scripts/x_publisher.py tweet "A reply." --reply-to <tweet_id>
+scripts/x_publisher tweet "A reply." --reply-to <tweet_id>
 ```
 
 ## Output
@@ -147,9 +145,9 @@ After successful publishing, you will get:
 
 | Command | Purpose | Example |
 |---------|---------|---------|
-| `verify` | Verify authentication | `x_publisher.py verify` |
-| `tweet` | Publish a tweet | `x_publisher.py tweet "Hello" --media photo.jpg` |
-| (thread) | Publish a reply-chained thread | `post_thread.py "First" "Second" "Third"` |
+| `verify` | Verify authentication | `scripts/x_publisher verify` |
+| `tweet` | Publish a tweet | `scripts/x_publisher tweet "Hello" --media photo.jpg` |
+| (thread) | Publish a reply-chained thread | `scripts/post_thread "First" "Second" "Third"` |
 
 ### tweet Command Arguments
 
@@ -234,14 +232,14 @@ Error Message: Rate limit exceeded
 
 ```bash
 # Publish daily summary
-python3 scripts/x_publisher.py tweet "📊 Today's Market Summary: BTC $43,250 (+2.3%)" 
+scripts/x_publisher tweet "📊 Today's Market Summary: BTC $43,250 (+2.3%)" 
 ```
 
 ### Use Case 2: Publishing with Images
 
 ```bash
 # Publish screenshots or charts
-python3 scripts/x_publisher.py tweet "📈 Today's chart" --media ~/charts/btc_today.png
+scripts/x_publisher tweet "📈 Today's chart" --media ~/charts/btc_today.png
 ```
 
 ### Use Case 3: Batch Publishing Script
@@ -253,7 +251,7 @@ python3 scripts/x_publisher.py tweet "📈 Today's chart" --media ~/charts/btc_t
 CONTENT="🚀 Breaking News: ..."
 IMAGE="/path/to/news_image.jpg"
 
-python3 scripts/x_publisher.py tweet "$CONTENT" --media "$IMAGE"
+scripts/x_publisher tweet "$CONTENT" --media "$IMAGE"
 ```
 
 ### Use Case 4: Integration with Other Tools
@@ -263,7 +261,7 @@ import subprocess
 import json
 
 result = subprocess.run(
-    ['python3', 'scripts/x_publisher.py', 'tweet', 'Hello!', '--media', 'photo.jpg'],
+    ['scripts/x_publisher', 'tweet', 'Hello!', '--media', 'photo.jpg'],
     capture_output=True,
     text=True
 )
